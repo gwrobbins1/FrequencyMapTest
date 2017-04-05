@@ -10,5 +10,10 @@ module.exports = function(app,express,sensorModule){
 		res.json(sensorModule.getLiveSensorReadings());
 	});
 
+	apiRouter.route("/historical/:filters")
+	.get(function(req,res){
+		res.json({"message":"test server received request!"});
+	});
+
 	return apiRouter;
 };
