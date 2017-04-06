@@ -12,7 +12,13 @@ module.exports = function(app,express,sensorModule){
 
 	apiRouter.route("/historical/:filters")
 	.get(function(req,res){
-		res.json({"message":"test server received request!"});
+		var params = req.params.filters;
+		console.log(params);
+		//parse filter data to generate query
+		var tokens = params.split('#',3);
+		console.log(tokens);
+
+		res.json({"message":"test server received request with parameters: "+tokens});
 	});
 
 	return apiRouter;
