@@ -20,15 +20,14 @@ var sensor = (function(){
 	var makeSensorReadings = function(insertFunc){//format for mysql db
 		if(minFrequency !== null && maxFrequency !== null &&
 			minStrength !== null && maxStrength !== null){
-			console.log("Strating sensor readings at:"+getTimeStamp());
+			console.log("Starting sensor readings at:"+getTimeStamp());
 			var sensorData = {};
 			_.map(sensors,function(sensor){
 				sensorData['SID'] = sensor.SID;
 				for(var freq = minFrequency; freq <= maxFrequency;freq++){
 					sensorData['TIME'] = getTimeStamp();
 					sensorData['Frequency'] = freq;
-					sensorData['Readings'] = minStrength + (maxStrength-minStrength)*Math.random();
-					sensorData['Completed'] = 1;
+					sensorData['Readings'] = minStrength + (maxStrength-minStrength)*Math.random();					
 					insertFunc(sensorData);
 				}				
 			});
@@ -67,31 +66,12 @@ var sensor = (function(){
 
 		return location;
 	};
-	
-	var getLiveSensorReadings = function(){
-		var sensorData = [];	
-		_.map(sensors,function(sensor){//format for webserver and pick random strength
-			var newSensor = {};	
-			// newSensor['sensorId'] = sensor.SID;
-			newSensor['id'] = sensor.SID;
-			newSensor['location'] = [sensor.Longitude,sensor.Latitude];
-			newSensor['timeStamp'] = getTimeStamp();
-			newSensor['name'] = "TestSensor-"+sensor.SID;
-			newSensor['readings'] = {};
-			for(var freq = minFrequency; freq <= maxFrequency;freq++){				
-				newSensor.readings[freq] = minStrength + (maxStrength-minStrength)*Math.random();
-			}			
-			sensorData.push(newSensor);
-		});
-		return sensorData;
-	};
 
 	return {
 		addSensor : addSensor,
 		setSensorFrequency : setSensorFrequency,
 		setSensorStrength : setSensorStrength,
 		makeSensorReadings : makeSensorReadings,
-		getLiveSensorReadings : getLiveSensorReadings,
 		getSensorLocation : getSensorLocation
 	};
 })();

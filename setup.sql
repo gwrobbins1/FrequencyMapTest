@@ -16,3 +16,10 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Recorded_Data` (
   `Frequency` DOUBLE NULL,
   `Readings` DOUBLE NULL,
   PRIMARY KEY (`Index`));
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Live_Data` (
+  `SID` INT NULL,
+  `TIME` DATETIME NULL,
+  `Frequency` DOUBLE NULL,
+  `Readings` DOUBLE NULL,
+  PRIMARY KEY (`SID`,`Frequency`));
