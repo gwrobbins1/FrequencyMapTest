@@ -34,6 +34,21 @@ var dbUtils = (function(){
 		console.log("DB connection opened");
 	};
 
+	var insertSensors = function(sensorArray){
+		if(connection !== null){
+			connection.query(
+				{
+					sql:"INSERT INTO sensors (SID,Latitude,Longitude) VALUES ?;",
+					values:[sensorArray]
+				},
+				function(err,results,fields){
+					if(err){console.log(err);}
+					else{console.log("Inserted "+results.affectedRows+" sensors into DB.");}
+				}
+			);
+		}
+	};
+
 	var insertSensor = function(sensor){
 		if(connection !== null){
 			connection.query(
@@ -47,47 +62,95 @@ var dbUtils = (function(){
 			);
 			console.log("inserted new sensor id:"+sensor.SID);
 		}
-	};
+	};	
 
 	var insertLiveReadings = function(sensorData){
 		if(connection !== null){
 			connection.query(
 				{
-					sql:"SELECT SID FROM live_data;",
-					values:sensorData
+					sql:"SELECT DISTINCT SID FROM live_data;",
 				},
 				function(err,results,fields){
 					if(err){console.log(err);}
-					console.log(results[0].SID);
+					else{
+						if(results){
+							if(results.length > 0){
+								// console.log("---sid: "+results[0].SID);
+								var updateData = [];
+								results.forEach(function(data){
+									// console.log("for each result sid: "+data.SID);
+									sensorData.forEach(function(sensor){
+										if(sensor[0] === data.SID){
+											updateData.push(sensor[1]);//time
+											updateData.push(sensor[2]);//frequency
+											updateData.push(sensor[0]);//SID											
+											updateData.push(sensor[3]);//readings
+										}
+									});
+								});
+								connect();
+								connection.query(
+									{
+										// sql:"UPDATE live_data SET TIME=?, Readings=? WHERE SID=? AND Frequency=?;",
+										sql:"UPDATE live_data (TIME, Readings) VALUES ? WHERE SID=? AND Frequency=?;",
+										values:updateData
+									},
+									function(err,results,fields){
+										if(err){console.log(err);}
+										else{
+											console.log("Updated "+results.affectedRows+" in live_data table.");
+										}
+									}
+								);
+								close();
+							}else{
+								connect();
+								connection.query(
+									{
+										sql:"INSERT INTO live_data (SID,TIME,Frequency,Readings,Completed) VALUES ?;",
+										values:[sensorData]
+									},
+									function(err,results,fields){
+										if(err){console.log(err);}
+										else{console.log("Number of readings recorded for live table: "+results.affectedRows);}
+									}
+								);
+								close();
+							}							
+						}else{
+							connect();
+							connection.query(
+								{
+									sql:"INSERT INTO live_data (SID,TIME,Frequency,Readings,Completed) VALUES ?;",
+									values:[sensorData]
+								},
+								function(err,results,fields){
+									if(err){console.log(err);}
+									else{console.log("Number of readings recorded for live table: "+results.affectedRows);}
+								}
+							);
+							close();
+						}
+					}
 				}
 			);
 
-			// connection.query(
-			// 	{
-			// 		sql:"INSERT INTO live_data SET ?;",
-			// 		values:sensorData
-			// 	},
-			// 	function(err,results,fields){
-			// 		if(err){console.log(err);}
-			// 	}
-			// );
-			// console.log("inserted sensor id:"+sensor.SID+" readings at:"+sensor.TIME);
+
 		}
 	};
 
 	var insertHistoricalReadings = function(sensorData){
 		if(connection !== null){
-			sensorData['Completed'] = 1;
 			connection.query(
 				{
-					sql:"INSERT INTO Recorded_data SET ?;",
-					values:sensorData
+					sql:"INSERT INTO Recorded_data (SID,TIME,Frequency,Readings,Completed) VALUES ?;",
+					values:[sensorData]
 				},
 				function(err,results,fields){
 					if(err){console.log(err);}
+					else{console.log("Number of readings recorded for historical readings: "+results.affectedRows);}
 				}
 			);
-			// console.log("inserted sensor id:"+sensor.SID+" readings at:"+sensor.TIME);
 		}
 	};
 
@@ -102,6 +165,7 @@ var dbUtils = (function(){
 		init : init,
 		connect : connect,
 		insertSensor : insertSensor,
+		insertSensors : insertSensors,
 		insertHistoricalReadings : insertHistoricalReadings,
 		insertLiveReadings : insertLiveReadings,
 		close : close

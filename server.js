@@ -26,8 +26,6 @@ fs.readFile('./config.properties','utf8',function(err,data){
 		}
 	});
 
-
-
 	config.numOfSensors = parseInt(config.numOfSensors);
 	config.maxLat = parseFloat(config.maxLat);
 	config.maxLon = parseFloat(config.maxLon);
@@ -40,37 +38,48 @@ fs.readFile('./config.properties','utf8',function(err,data){
 	
 	sensorModule.setSensorFrequency([config.minSensorFrequency,config.maxSensorFrequency]);
 	sensorModule.setSensorStrength([config.minSensorStrength,config.maxSensorStrength]);
-	// dbUtils.configure(config);
-	// dbUtils.connect();
 	dbUtils.init(config);
-	var sensor = {};
 
-	dbUtils.connect();
+	var sensor = {};//needed to build and store sensor for generating random data. added to sensor module.
+	var sensorDataArray = [];//needed to bulk insert sensors into database.
+	
 	for(var i = 1; i <= config.numOfSensors;i++){
+		var sensorData = [];
 		sensor = {
 			SID:i,
 			Latitude:config.minLat + (config.maxLat-config.minLat)*Math.random(),
 			Longitude:config.minLon + (config.maxLon-config.minLon)*Math.random()
 		};
 		sensorModule.addSensor(sensor);//cached for readings
-		dbUtils.insertSensor(sensor);
+		//format data for bulk insert to DB
+		sensorData.push(sensor.SID);
+		sensorData.push(sensor.Latitude);
+		sensorData.push(sensor.Longitude);
+		sensorDataArray.push(sensorData);		
 	}
+	
+	dbUtils.connect();
+	dbUtils.insertSensors(sensorDataArray);
 	dbUtils.close();
 
-	dbUtils.connect();
-	sensorModule.makeSensorReadings(dbUtils.insertLiveReadings);
-	dbUtils.close();	
-	// setInterval(function(){
+	// setInterval(
+	// 	function(){
 	// 		dbUtils.connect();
-	// 		sensorModule.makeSensorReadings(dbUtils.insertSensorReadings);
+	// 		sensorModule.makeSensorReadings(dbUtils.insertHistoricalReadings);
 	// 		dbUtils.close();
-	// 	},3e5); //5 min interval
+	// 	},
+	// 	3e5//5 min interval
+	// ); 
 
-	setInterval(function(){
-		dbUtils.connect();
-		sensorModule.makeSensorReadings(dbUtils.insertHistoricalReadings);
-		dbUtils.close();
-	},60e3);//1 min interval
+
+	setInterval(
+		function(){
+			dbUtils.connect();
+			sensorModule.makeSensorReadings(dbUtils.insertLiveReadings);
+			dbUtils.close();
+		},
+		60e3
+	);//1 min interval
 
 	app.use("/",express.static(path.join(__dirname,"/public")) );	
 	app.listen( 7000 );
