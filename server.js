@@ -66,7 +66,6 @@ fs.readFile('./config.properties','utf8',function(err,data){
 		3e5//5 min interval
 	); 
 
-
 	setInterval(
 		function(){
 			sensorModule.makeSensorReadings(dbUtils.insertLiveReadings);
