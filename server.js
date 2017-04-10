@@ -62,14 +62,14 @@ fs.readFile('./config.properties','utf8',function(err,data){
 	dbUtils.insertSensors(sensorDataArray);
 	dbUtils.close();
 
-	// setInterval(
-	// 	function(){
-	// 		dbUtils.connect();
-	// 		sensorModule.makeSensorReadings(dbUtils.insertHistoricalReadings);
-	// 		dbUtils.close();
-	// 	},
-	// 	3e5//5 min interval
-	// ); 
+	setInterval(
+		function(){
+			dbUtils.connect();
+			sensorModule.makeSensorReadings(dbUtils.insertHistoricalReadings);
+			dbUtils.close();
+		},
+		3e5//5 min interval
+	); 
 
 
 	setInterval(
@@ -78,8 +78,9 @@ fs.readFile('./config.properties','utf8',function(err,data){
 			sensorModule.makeSensorReadings(dbUtils.insertLiveReadings);
 			dbUtils.close();
 		},
-		60e3
-	);//1 min interval
+		// 60e3//1 min interval
+		12e3//12 sec interval. 5 times per minute.
+	);
 
 	app.use("/",express.static(path.join(__dirname,"/public")) );	
 	app.listen( 7000 );
