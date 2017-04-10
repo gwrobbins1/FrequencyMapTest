@@ -57,16 +57,11 @@ fs.readFile('./config.properties','utf8',function(err,data){
 		sensorData.push(sensor.Longitude);
 		sensorDataArray.push(sensorData);		
 	}
-	
-	dbUtils.connect();
 	dbUtils.insertSensors(sensorDataArray);
-	dbUtils.close();
 
 	setInterval(
 		function(){
-			dbUtils.connect();
 			sensorModule.makeSensorReadings(dbUtils.insertHistoricalReadings);
-			dbUtils.close();
 		},
 		3e5//5 min interval
 	); 
@@ -74,9 +69,7 @@ fs.readFile('./config.properties','utf8',function(err,data){
 
 	setInterval(
 		function(){
-			dbUtils.connect();
 			sensorModule.makeSensorReadings(dbUtils.insertLiveReadings);
-			dbUtils.close();
 		},
 		// 60e3//1 min interval
 		12e3//12 sec interval. 5 times per minute.
