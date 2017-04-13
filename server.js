@@ -59,28 +59,14 @@ fs.readFile('./config.properties','utf8',function(err,data){
 	}
 	dbUtils.insertSensors(sensorDataArray);
 
-	dbUtils.clearLiveReadings();	
-
+	sensorModule.makeBatchLiveReadings(dbUtils.insertLiveReadings);
+	
 	setInterval(
 		function(){
-			sensorModule.makeBatchSensorReadings(dbUtils.updateLiveReadings);
+			sensorModule.makeSensorReadings(dbUtils.insertHistoricalReadings);
 		},
-		5e3//5 sec interval
-	);	
-	
-	// setInterval(
-	// 	function(){
-	// 		sensorModule.makeBatchSensorReadings(dbUtils.insertHistoricalReadings);
-	// 	},
-	// 	3e5//5 min interval
-	// ); 
-
-	// setInterval(
-	// 	function(){
-	// 		sensorModule.makeSensorReadings(dbUtils.updateLiveReadings);
-	// 	},
-	// 	5e3//5 sec interval
-	// );
+		3e5//5 min interval
+	);
 
 	app.use("/",express.static(path.join(__dirname,"/public")) );	
 	app.listen( 7000 );

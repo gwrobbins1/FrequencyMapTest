@@ -21,7 +21,49 @@ var sensor = (function(){
 		return sensors;
 	}
 
-	var makeBatchSensorReadings = function(insertFunc){
+	var makeBatchLiveReadings = function(insertFunc){
+		if(minFrequency !== null && maxFrequency !== null &&
+			minStrength !== null && maxStrength !== null){
+			// console.log("Starting sensor readings at:"+getTimeStamp());
+			var sensorDataArray = [];
+			_.map(sensors,function(sensor){
+				for(var freq = minFrequency; freq <= maxFrequency;freq++){
+					var sensorData = [];
+					sensorData.push(sensor.SID);
+					sensorData.push(getTimeStamp());
+					sensorData.push(freq);
+					sensorData.push(minStrength + (maxStrength-minStrength)*Math.random());
+					sensorData.push(1);
+					sensorDataArray.push(sensorData);					
+				}				
+			});
+			insertFunc(sensorDataArray,makeBatchLiveReadings);
+			// console.log("Sensor readings finished at:"+getTimeStamp());
+		}
+	};
+		//interative
+	// var makeSensorReadings = function(insertFunc){//format for mysql db
+	// 	if(minFrequency !== null && maxFrequency !== null &&
+	// 		minStrength !== null && maxStrength !== null){
+	// 		console.log("Starting sensor readings at:"+getTimeStamp());
+	// 		_.map(sensors,function(sensor){
+	// 			for(var freq = minFrequency; freq <= maxFrequency;freq++){
+	// 				var sensorData = {};
+	// 				var randStrength = minStrength + (maxStrength-minStrength)*Math.random();
+	// 				sensorData['Sensors_SID'] = sensor.SID;
+	// 				sensorData['TIME'] = getTimeStamp();
+	// 				sensorData['Frequency'] = freq;
+	// 				sensorData['Readings'] = randStrength;
+	// 				sensorData['Completed'] = 1;
+	// 				insertFunc(sensorData);
+	// 			}				
+	// 		});			
+	// 		console.log("Sensor readings finished at:"+getTimeStamp());
+	// 	}
+	// };
+
+	//batch
+	var makeSensorReadings = function(insertFunc){//format for mysql db
 		if(minFrequency !== null && maxFrequency !== null &&
 			minStrength !== null && maxStrength !== null){
 			console.log("Starting sensor readings at:"+getTimeStamp());
@@ -41,47 +83,6 @@ var sensor = (function(){
 			console.log("Sensor readings finished at:"+getTimeStamp());
 		}
 	};
-
-	var makeSensorReadings = function(insertFunc){//format for mysql db
-		if(minFrequency !== null && maxFrequency !== null &&
-			minStrength !== null && maxStrength !== null){
-			console.log("Starting sensor readings at:"+getTimeStamp());
-			_.map(sensors,function(sensor){
-				for(var freq = minFrequency; freq <= maxFrequency;freq++){
-					var sensorData = {};
-					var randStrength = minStrength + (maxStrength-minStrength)*Math.random();
-					sensorData['Sensors_SID'] = sensor.SID;
-					sensorData['TIME'] = getTimeStamp();
-					sensorData['Frequency'] = freq;
-					sensorData['Readings'] = randStrength;
-					sensorData['Completed'] = 1;
-					insertFunc(sensorData);
-				}				
-			});			
-			console.log("Sensor readings finished at:"+getTimeStamp());
-		}
-	};
-
-	// var makeSensorReadings = function(insertFunc){//format for mysql db
-	// 	if(minFrequency !== null && maxFrequency !== null &&
-	// 		minStrength !== null && maxStrength !== null){
-	// 		console.log("Starting sensor readings at:"+getTimeStamp());
-	// 		var sensorDataArray = [];
-	// 		_.map(sensors,function(sensor){
-	// 			for(var freq = minFrequency; freq <= maxFrequency;freq++){
-	// 				var sensorData = [];
-	// 				sensorData.push(sensor.SID);
-	// 				sensorData.push(getTimeStamp());
-	// 				sensorData.push(freq);
-	// 				sensorData.push(minStrength + (maxStrength-minStrength)*Math.random());
-	// 				sensorData.push(1);
-	// 				sensorDataArray.push(sensorData);					
-	// 			}				
-	// 		});
-	// 		insertFunc(sensorDataArray);
-	// 		console.log("Sensor readings finished at:"+getTimeStamp());
-	// 	}
-	// };
 
 	var setSensorFrequency = function(range){
 		if(Array.isArray(range) && range.length > 0){
@@ -121,7 +122,7 @@ var sensor = (function(){
 		setSensorFrequency : setSensorFrequency,
 		setSensorStrength : setSensorStrength,
 		makeSensorReadings : makeSensorReadings,
-		makeBatchSensorReadings : makeBatchSensorReadings,
+		makeBatchLiveReadings : makeBatchLiveReadings,
 		getSensorLocation : getSensorLocation
 	};
 })();
