@@ -20,7 +20,7 @@ var dbUtils = (function(){
 	};
 
 	var connect = function(){
-		console.log("DB connection opened");
+		// console.log("DB connection opened");
 		pool.getConnection(function(err,connection){
 			if(err){console.log(err);}
 			else{
@@ -97,25 +97,43 @@ var dbUtils = (function(){
 		});
 	};
 
+	// var updateLiveReadings = function(sensorData){
+	// 	var sqlQuery = "UPDATE Live SET TIME=?, Readings=? WHERE Sensors_SID=? AND Frequency=?;";
+	// 	var updateData = [];
+	// 	updateData.push(sensorData.TIME);
+	// 	updateData.push(sensorData.Readings);
+	// 	updateData.push(sensorData.Sensors_SID);
+	// 	updateData.push(sensorData.Frequency);
+
+	// 	pool.getConnection(function(err,connection){
+	// 		if(err){console.log(err);}
+	// 		else{
+	// 			if(connection !== undefined){
+	// 				connection.query(sqlQuery,updateData,function(err,results,fields){
+	// 						if(err){
+	// 							console.log(err);
+	// 						}
+	// 						// else{console.log("updated live readings");}
+	// 						close(connection);
+	// 					}
+	// 				);			
+	// 			}
+	// 		}
+	// 	});	
+	// };
+
 	var updateLiveReadings = function(sensorData){
-		var sqlQuery = "UPDATE Live SET TIME=?,Readings=? WHERE Sensors_SID=? AND Frequency=?;";
-		var updataData = [];
-		updataData.push(sensorData[1]);
-		updataData.push(sensorData[3]);
-		updataData.push(sensorData[0]);
+		var sqlQuery = "REPLACE INTO Live (Sensors_SID,TIME,Frequency,Readings,Completed) VALUES ?;";
 
 		pool.getConnection(function(err,connection){
 			if(err){console.log(err);}
 			else{
 				if(connection !== undefined){
-					connection.query(
-						{
-							sql:sqlQuery,
-							values:[updataData]
-						},
-						function(err,results,fields){
-							if(err){console.log(err);}
-							else{console.log("updated live readings");}
+					connection.query({sql:sqlQuery,values:[sensorData]},function(err,results,fields){
+							if(err){
+								console.log(err);
+							}
+							// else{console.log("updated live readings");}
 							close(connection);
 						}
 					);			
@@ -123,9 +141,28 @@ var dbUtils = (function(){
 			}
 		});	
 	};
+	// var insertLiveReadings = function(sensorData){
+	// 	var sqlQuery = "INSERT INTO Live SET ?;";
+	// 	pool.getConnection(function(err,connection){
+	// 		if(err){console.log(err);}
+	// 		else{
+	// 			if(connection !== undefined){
+	// 				connection.query(sqlQuery,sensorData,function(err,results,fields){
+	// 						if(err){console.log(err);}
+	// 						else{console.log("Inserted live readings");}
+	// 						close(connection);
+	// 					}
+	// 				);					
+	// 			}
+	// 		}
+	// 	});	
+	// };
 
 	var insertLiveReadings = function(sensorData){
-		var sqlQuery = "INSERT INTO Live Sensors_SID,TIME,Frequency,Readings,Completed VALUES ?;";
+		var sqlQuery = "DELETE FROM Live;"+
+			"INSERT INTO Live (Sensors_SID,TIME,Frequency,Readings,Completed) VALUES ?;";
+		// var sqlQuery = "INSERT INTO Live (Sensors_SID,TIME,Frequency,Readings,Completed) VALUES ?;";
+
 		pool.getConnection(function(err,connection){
 			if(err){console.log(err);}
 			else{
@@ -143,32 +180,9 @@ var dbUtils = (function(){
 					);			
 				}
 			}
-		});	
-	};
-
-	// var insertLiveReadings = function(sensorData){
-	// 	var sqlQuery = "DELETE FROM Live;"+
-	// 		"INSERT INTO Live (Sensors_SID,TIME,Frequency,Readings,Completed) VALUES ?;";
-	// 	pool.getConnection(function(err,connection){
-	// 		if(err){console.log(err);}
-	// 		else{
-	// 			if(connection !== undefined){
-	// 				connection.query(
-	// 					{
-	// 						sql:sqlQuery,
-	// 						values:[sensorData]
-	// 					},
-	// 					function(err,results,fields){
-	// 						if(err){console.log(err);}
-	// 						else{console.log("Inserted live readings");}
-	// 						close(connection);
-	// 					}
-	// 				);			
-	// 			}
-	// 		}
-	// 	});
+		});
 	
-	// };
+	};
 
 	var insertHistoricalReadings = function(sensorData){
 		// var connection = connect();
@@ -194,8 +208,8 @@ var dbUtils = (function(){
 
 	var close = function(connection){
 		connection.release();
-		console.log("DB connection released");
-	}
+		// console.log("DB connection released");
+	};
 
 	return {
 		init : init,

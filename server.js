@@ -59,12 +59,18 @@ fs.readFile('./config.properties','utf8',function(err,data){
 	}
 	dbUtils.insertSensors(sensorDataArray);
 
-	dbUtils.clearLiveReadings();
-	sensorModule.makeSensorReadings(dbUtils.insertLiveReadings);
+	dbUtils.clearLiveReadings();	
 
+	setInterval(
+		function(){
+			sensorModule.makeBatchSensorReadings(dbUtils.updateLiveReadings);
+		},
+		5e3//5 sec interval
+	);	
+	
 	// setInterval(
 	// 	function(){
-	// 		sensorModule.makeSensorReadings(dbUtils.insertHistoricalReadings);
+	// 		sensorModule.makeBatchSensorReadings(dbUtils.insertHistoricalReadings);
 	// 	},
 	// 	3e5//5 min interval
 	// ); 
@@ -73,8 +79,7 @@ fs.readFile('./config.properties','utf8',function(err,data){
 	// 	function(){
 	// 		sensorModule.makeSensorReadings(dbUtils.updateLiveReadings);
 	// 	},
-	// 	// 60e3//1 min interval
-	// 	2e3//2 sec interval
+	// 	5e3//5 sec interval
 	// );
 
 	app.use("/",express.static(path.join(__dirname,"/public")) );	
