@@ -2,7 +2,6 @@
 var mysql = require("mysql");
 var dbUtils = (function(){
 	var configuration = null;
-	// var connection = null;
 	var pool = null;
 
 	var init = function(config){
@@ -34,7 +33,6 @@ var dbUtils = (function(){
 		pool.getConnection(function(err,connection){
 			if(err){console.log(err);}
 			else{
-				// return connection;
 				if(connection !== undefined){
 		     	console.log("inserting sensors");
 					connection.query(
@@ -58,7 +56,6 @@ var dbUtils = (function(){
 	};
 
 	var insertSensor = function(sensor){
-		// var connection = connect();
 		pool.getConnection(function(err,connection){
 			if(err){console.log(err);}
 			else{
@@ -96,69 +93,6 @@ var dbUtils = (function(){
 			}
 		});
 	};
-
-	// var updateLiveReadings = function(sensorData){
-	// 	var sqlQuery = "UPDATE Live SET TIME=?, Readings=? WHERE Sensors_SID=? AND Frequency=?;";
-	// 	var updateData = [];
-	// 	updateData.push(sensorData.TIME);
-	// 	updateData.push(sensorData.Readings);
-	// 	updateData.push(sensorData.Sensors_SID);
-	// 	updateData.push(sensorData.Frequency);
-
-	// 	pool.getConnection(function(err,connection){
-	// 		if(err){console.log(err);}
-	// 		else{
-	// 			if(connection !== undefined){
-	// 				connection.query(sqlQuery,updateData,function(err,results,fields){
-	// 						if(err){
-	// 							console.log(err);
-	// 						}
-	// 						// else{console.log("updated live readings");}
-	// 						close(connection);
-	// 					}
-	// 				);			
-	// 			}
-	// 		}
-	// 	});	
-	// };
-
-	// var updateLiveReadings = function(sensorData){
-	// 	var sqlQuery = "REPLACE INTO Live (Sensors_SID,TIME,Frequency,Readings,Completed) VALUES ?;";
-
-	// 	pool.getConnection(function(err,connection){
-	// 		if(err){console.log(err);}
-	// 		else{
-	// 			if(connection !== undefined){
-	// 				connection.query({sql:sqlQuery,values:[sensorData]},function(err,results,fields){
-	// 						if(err){
-	// 							console.log(err);
-	// 						}
-	// 						// else{console.log("updated live readings");}
-	// 						close(connection);
-	// 					}
-	// 				);			
-	// 			}
-	// 		}
-	// 	});	
-	// };
-
-		//iteratively
-	// var insertLiveReadings = function(sensorData){
-	// 	var sqlQuery = "INSERT INTO Live SET ?;";
-	// 	pool.getConnection(function(err,connection){
-	// 		if(err){console.log(err);}
-	// 		else{
-	// 			if(connection !== undefined){
-	// 				connection.query(sqlQuery,sensorData,function(err,results,fields){
-	// 						if(err){console.log(err);}
-	// 						else{console.log("Inserted live readings");}
-	// 						close(connection);
-	// 					}
-	// 				);					
-	// 			}
-	// 		}
-	// 	});	
-	// };
 
 	//batch
 	var insertLiveReadings = function(sensorData,callback){
@@ -229,7 +163,6 @@ var dbUtils = (function(){
 		insertSensors : insertSensors,
 		insertHistoricalReadings : insertHistoricalReadings,
 		insertLiveReadings : insertLiveReadings,
-		// clearLiveReadings : clearLiveReadings,
 		close : close
 	};
 })();

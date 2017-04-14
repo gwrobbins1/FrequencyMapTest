@@ -41,26 +41,6 @@ var sensor = (function(){
 			// console.log("Sensor readings finished at:"+getTimeStamp());
 		}
 	};
-		//interative
-	// var makeSensorReadings = function(insertFunc){//format for mysql db
-	// 	if(minFrequency !== null && maxFrequency !== null &&
-	// 		minStrength !== null && maxStrength !== null){
-	// 		console.log("Starting sensor readings at:"+getTimeStamp());
-	// 		_.map(sensors,function(sensor){
-	// 			for(var freq = minFrequency; freq <= maxFrequency;freq++){
-	// 				var sensorData = {};
-	// 				var randStrength = minStrength + (maxStrength-minStrength)*Math.random();
-	// 				sensorData['Sensors_SID'] = sensor.SID;
-	// 				sensorData['TIME'] = getTimeStamp();
-	// 				sensorData['Frequency'] = freq;
-	// 				sensorData['Readings'] = randStrength;
-	// 				sensorData['Completed'] = 1;
-	// 				insertFunc(sensorData);
-	// 			}				
-	// 		});			
-	// 		console.log("Sensor readings finished at:"+getTimeStamp());
-	// 	}
-	// };
 
 	//batch
 	var makeSensorReadings = function(insertFunc){//format for mysql db
