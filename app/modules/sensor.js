@@ -46,7 +46,7 @@ var sensor = (function(){
 	var makeSensorReadings = function(insertFunc){//format for mysql db
 		if(minFrequency !== null && maxFrequency !== null &&
 			minStrength !== null && maxStrength !== null){
-			console.log("Starting sensor readings at:"+getTimeStamp());
+			// console.log("Starting sensor readings at:"+getTimeStamp());
 			var sensorDataArray = [];
 			_.map(sensors,function(sensor){
 				for(var freq = minFrequency; freq <= maxFrequency;freq++){
@@ -60,7 +60,7 @@ var sensor = (function(){
 				}				
 			});
 			insertFunc(sensorDataArray);
-			console.log("Sensor readings finished at:"+getTimeStamp());
+			// console.log("Sensor readings finished at:"+getTimeStamp());
 		}
 	};
 
@@ -84,8 +84,8 @@ var sensor = (function(){
 		try{
 			sensors.forEach(function(sensor){
 				if(sensor.SID === sensorId){
-					console.log("lat: "+sensor.Latitude);
-					console.log("lon: "+sensor.Longitude);
+					// console.log("lat: "+sensor.Latitude);
+					// console.log("lon: "+sensor.Longitude);
 					location.push(sensor.Longitude);
 					location.push(sensor.Latitude);
 					throw new Break;

@@ -15,7 +15,7 @@ var dbUtils = (function(){
 			password:configuration.password,
 			database:configuration.database
 		});	
-		console.log("Intialized DB connection");
+		// console.log("Intialized DB connection");
 	};
 
 	var connect = function(){
@@ -34,7 +34,7 @@ var dbUtils = (function(){
 			if(err){console.log(err);}
 			else{
 				if(connection !== undefined){
-		     	console.log("inserting sensors");
+		     	// console.log("inserting sensors");
 					connection.query(
 						{
 							sql:"INSERT INTO Sensors (SID,Latitude,Longitude) VALUES ?;",
@@ -43,13 +43,14 @@ var dbUtils = (function(){
 						function(err,results,fields){					
 							if(err){
 								// console.log(err);
-								console.log("Sensor are already in DB.");
+								// console.log("Sensor are already in DB.");
 							}
-							else{console.log("Inserted "+results.affectedRows+" sensors into DB.");}
+							// else{console.log("Inserted "+results.affectedRows+" sensors into DB.");}
 							close(connection);
 						}
 					);			
-				}else{console.log("connection is undefined");}				
+				}
+				// else{console.log("connection is undefined");}				
 			}
 		});		
 
@@ -111,7 +112,7 @@ var dbUtils = (function(){
 					function(err,results,fields){
 						if(err){console.log(err);}
 						else{
-							console.log("Cleared live table.");			
+							// console.log("Cleared live table.");			
 							connection.query(
 								{
 									sql:sqlQuery,
@@ -119,7 +120,7 @@ var dbUtils = (function(){
 								},
 								function(err,results,fields){
 									if(err){console.log(err);}
-									else{console.log("Inserted live readings");}
+									// else{console.log("Inserted live readings");}
 									close(connection);
 									callback(insertLiveReadings);
 								}
@@ -144,7 +145,7 @@ var dbUtils = (function(){
 						},
 						function(err,results,fields){
 							if(err){console.log(err);}
-							else{console.log("Number of readings recorded for historical readings: "+results.affectedRows);}
+							// else{console.log("Number of readings recorded for historical readings: "+results.affectedRows);}
 							close(connection);
 						}
 					);
