@@ -82,7 +82,8 @@ var dbUtils = (function(){
 			else{
 				connection.query(
 					{
-						sql:"DELETE FROM Live;"
+						// sql:"DELETE FROM Live;"
+						sql:"TRUNCATE Live;"
 					},
 					function(err,results,fields){
 						if(err){console.log(err);}
@@ -96,7 +97,7 @@ var dbUtils = (function(){
 
 	//batch
 	var insertLiveReadings = function(sensorData,callback){
-		var sqlQuery = "DELETE FROM Live;"+
+		var sqlQuery = "TRUNCATE Live;"+
 			"INSERT INTO Live (Sensors_SID,TIME,Frequency,Readings,Completed) VALUES ?;";
 
 		pool.getConnection(function(err,connection){
@@ -104,7 +105,8 @@ var dbUtils = (function(){
 			else{
 				connection.query(
 					{
-						sql:"DELETE FROM Live;"
+						// sql:"DELETE FROM Live;"
+						sql:"TRUNCATE Live;"
 					},
 					function(err,results,fields){
 						if(err){console.log(err);}
